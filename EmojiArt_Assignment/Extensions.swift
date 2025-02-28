@@ -47,3 +47,17 @@ extension AnyTransition {
     static let rollUp: AnyTransition = .asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top))
     static let rollDown: AnyTransition = .asymmetric(insertion: .move(edge: .top), removal: .move(edge: .bottom))
 }
+
+extension EmojiArtModel.Emoji.Position {
+    func `in`(_ geometry: GeometryProxy) -> CGPoint {
+        let center = geometry.frame(in: .local).center
+        
+        return CGPoint(x: center.x + CGFloat(x), y: center.y - CGFloat(y))
+    }
+}
+
+extension EmojiArtModel.Emoji {
+    var font: Font {
+        Font.system(size: CGFloat(size))
+    }
+}

@@ -28,11 +28,4 @@ class EmojiArtViewModel: ObservableObject {
     func addEmoji(_ emoji: String, at position: Emoji.Position, size: Int) {
         emojiArt.addEmoji(emoji, at: position, size: size)
     }
-    
-}
-
-extension EmojiArtModel.Emoji {
-    var font: Font {
-        Font.system(size: CGFloat(size))
-    }
 }

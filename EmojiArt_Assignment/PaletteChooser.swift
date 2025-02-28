@@ -36,11 +36,12 @@ struct PaletteChooser: View {
     }
     
     private func view(for palette: Palette) -> some View {
-        HStack {
+        HStack(alignment: .center) {
             Text(palette.name)
                 .font(.title)
             ScrollingEmojis(emojis: palette.emojis.map {String($0)})
         }
+        .padding(.vertical, 10  )
         .id(palette.id)
         .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))
     }
@@ -59,7 +60,6 @@ struct ScrollingEmojis: View {
                 }
             }
             .padding(.horizontal)
-            .padding(.bottom)
         }
     }
 }
