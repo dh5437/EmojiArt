@@ -14,8 +14,6 @@ struct EmojiArtView: View {
     
     @EnvironmentObject var paletteStore: PaletteStore
     
-    private let emojis = "🚙🚗🚘🚕🚖🏎🚚🛻🚛🚐🚓🚔🚑🚒🚀✈️🛫🛬🛩🚁🛸🚲🏍🛶⛵️🚤🛥🛳⛴🚢🚂🚝🚅🚆🚊🚉🚇🛺🚜"
-    
     private let paletteSize: CGFloat = 40
     
     var body: some View {
@@ -34,7 +32,12 @@ struct EmojiArtView: View {
                     .scaleEffect(zoomScale * gestureZoom)
                     .offset(position + gesturePosition)
             }
-            .gesture(dragGesture.simultaneously(with: zoomGesture))
+            .gesture(emojiArtViewModel.anyEmojiIsSelected(in: emojiArtViewModel.emojis) ? nil : dragGesture.simultaneously(with: zoomGesture))
+            .onTapGesture {
+                withAnimation(.spring()) {
+                    emojiArtViewModel.deselectAllEmojis()
+                }
+            }
             .dropDestination(for: Sturldata.self) { sturlDatas, location in
                 return drop(sturlDatas, at: location, in: geometry)
             }
@@ -47,9 +50,20 @@ struct EmojiArtView: View {
             .position(Emoji.Position.zero.in(geometry))
         ForEach(emojiArtViewModel.emojis, id: \.self) { emoji in
             Text(emoji.string)
-                .font(.system(size: CGFloat(emoji.size)))
+                .font(emoji.font)
+                .border(Color.yellow, width: emoji.isSelected ? 2 : 0)
                 .position(emoji.position.in(geometry))
-                .gesture(dragGesture.simultaneously(with: zoomGesture))
+                .gesture(emoji.isSelected ? dragGesture.simultaneously(with: zoomGesture) : nil)
+                .onTapGesture {
+                    withAnimation(.easeInOut) {
+                        emojiArtViewModel.selectEmoji(at: emoji)
+                    }
+                }
+                .contextMenu(menuItems: {
+                    AnimatedActionButton(title: "Delete", systemImage: "minus.circle", role: .destructive) {
+                        emojiArtViewModel.deleteEmoji(at: emoji)
+                    }
+                })
         }
     }
     

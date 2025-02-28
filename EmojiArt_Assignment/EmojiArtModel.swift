@@ -23,12 +23,38 @@ struct EmojiArtModel {
         ))
     }
     
+    mutating func selectEmoji(with emoji: Emoji) {
+        if let index = emojis.firstIndex(where: { emoji.id == $0.id }) {
+            emojis[index].isSelected.toggle()
+        }
+    }
+    
+    mutating func deselectAllEmojis() {
+        emojis.forEach { emoji in
+            if let index = emojis.firstIndex(where: { emoji.id == $0.id}) {
+                emojis[index].isSelected = false
+            }
+        }
+    }
+    
+    mutating func deleteEmoji(with emoji: Emoji) {
+        if let index = emojis.firstIndex(of: emoji) {
+            emojis.remove(at: index)
+        }
+    }
+    
+    func anyEmojiIsSelected(in emojis: [Emoji]) -> Bool {
+        return emojis.contains(where: { $0.isSelected })
+    }
+    
     struct Emoji: Identifiable, Hashable {
         var id: Int
         
         let string: String
         var position: Position
         var size: Int
+        
+        var isSelected: Bool = false
         
         struct Position: Codable, Equatable, Hashable {
             var x: Int
